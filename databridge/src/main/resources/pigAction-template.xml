@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<action name="pig_node" xmlns="uri:oozie:workflow:0.2">
+	 <pig>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>default</value>
+			</property>
+		</configuration>
+		<script>script.name</script>
+	</pig>
+	<ok to="end" />
+	<error to="fail" />
+</action>

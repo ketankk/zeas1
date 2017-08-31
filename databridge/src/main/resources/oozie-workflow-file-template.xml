@@ -1,0 +1,26 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="oozie-wf">
+<global>
+        <configuration>
+            <property>
+                <name>HADOOP_USER_NAME</name>
+                <value>${wf:user()}</value>
+            </property>
+        </configuration>
+  </global>
+<start to="java-action"/>
+    <action name='java-action'>
+	<configuration>
+		<property>
+			<name>mapred.job.queue.name</name>
+			<value>${queueName}</value>
+		</property>
+	</configuration>
+
+	<ok to="end" />
+	<error to="fail" />
+</action>
+   <kill name="fail">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill> 
+    <end name="end"/>
+</workflow-app>

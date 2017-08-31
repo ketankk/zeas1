@@ -1,0 +1,5 @@
+open 10.6.185.142
+zeas
+Zeas@2017
+put C:\Users\20597\git\zeas08Dec\zdp\ZDP-Master\ZDP-Web\target\ZDP-Web.war /usr/local/tomcat7_inst2/webapps/ZDP-Web.war
+quit

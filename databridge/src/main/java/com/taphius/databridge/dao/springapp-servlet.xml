@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+
+	<!-- the application context definition for the springapp DispatcherServlet -->
+
+	<task:annotation-driven />
+
+	<bean name="/hello.htm" class="com.taphius.login.HelloController" />
+	<bean name="/index" class="com.taphius.login.HelloController" />
+
+	<bean id="entityDAO" class="com.taphius.dao.EntityDefinationDAO">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="scheduledJob" class="com.taphius.scheduler.ScheduledDBPoller">
+		<property name="task" ref="task" />
+	</bean>
+
+
+	<bean id="task" class="com.taphius.scheduler.CustomTask">
+		<property name="entity" ref="entityDAO" />
+	</bean>
+
+	<bean name="runMeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+
+		<property name="jobClass" value="com.taphius.scheduler.ScheduledDBPoller" />
+
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="task" value-ref="task" />
+			</map>
+		</property>
+	</bean>
+	<!-- Cron Trigger, run every 5 seconds -->
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+
+		<property name="jobDetail" ref="runMeJob" />
+		<property name="cronExpression" value="* 0/5 * * * ?" />
+
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="runMeJob" />
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger" />
+			</list>
+		</property>
+	</bean>
+
+
+
+	<!-- MySQL connection details -->
+	<bean id="mysqlDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://10.6.117.86/taphius" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="mysqlDataSource" />
+	</bean>
+
+</beans>

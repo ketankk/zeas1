@@ -1,0 +1,1 @@
+hive -e "insert overwrite local directory '$2' row format delimited fields terminated by',' lines terminated by'\n' select * from zeas.$1"

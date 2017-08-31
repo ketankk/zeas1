@@ -1,0 +1,471 @@
+<div class="page-content blocky" my-directive
+	ng-controller="streamingCtrl">
+	
+	
+	<!-- Modal for Addstream -->
+	<div class="modal fade" id="addStream" tabindex="-1" role="dialog"
+		aria-labelledby="deleteLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 id="myModalDetailsLabel" class="modal-title ng-binding">
+						<b>Configure Data Stream Source:</b>
+					</h4>
+
+
+					<div class="row-fluid clearfix">&nbsp;</div>
+					<form role="form" class="form" id="streamForm" name="streamForm"
+						ng-submit="submitStream(editDatas)">
+						<div class="col-sm-3">
+
+							<label for="Database">Consumer Name<sup><span
+									aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+						</div>
+						<div class="form-group col-sm-7">
+							<input type="text" class="form-control" id="Customer"
+								placeholder="Consumer Name" ng-model="editDatas.Consumer_Name"
+								required="required">
+						</div>
+						<div class="col-sm-3">
+							<label for="Table Name">Topic<sup><span
+									class="glyphicon glyphicon-asterisk red" aria-hidden="true"></span></sup></label>
+						</div>
+						<div class="form-group col-sm-7">
+							<input type="text"
+								class="form-control ng-pristine ng-invalid ng-invalid-required"
+								id="Topic" placeholder="Topic" ng-model="editDatas.Topic"
+								required="required">
+						</div>
+						<div class="col-sm-5">
+							<label for="Host">Host Name<sup><span
+									aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+						</div>
+						<div class="col-sm-5">
+							<label for="Host">Port Number<sup><span
+									aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+						</div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="Host"
+								placeholder="Host Name" ng-model="editDatas.Hostname"
+								required="required">
+						</div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control"
+								ng-pattern="/^[0-9]{1,7}$/" required="required" id="Port"
+								name="port" placeholder="Port Number" ng-model="editDatas.Port">
+							<span class="alert-danger"
+								ng-show="streamForm.port.$error.pattern">Please enter
+								Integer only</span>
+						</div>
+						<div class="col-sm-5">
+							<label for=">DB Name">Group Name<sup><span
+									aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+						</div>
+						<div class="col-sm-5">
+							<label for="Table Name">Output Location<sup><span
+									aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+						</div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="GroupName"
+								placeholder="Group Name" ng-model="editDatas.Group_ID"
+								required="required">
+						</div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="OutputLocation"
+								placeholder="Output Location"
+								ng-model="editDatas.Output_Location" required="required">
+						</div>
+						<div class="form-group col-sm-5">
+							<b>Duration:</b><input type="text" class="form-control"
+								ng-pattern="/^[0-9]{1,7}$/" required="required" id="duration"
+								name="duration" placeholder="Duration"
+								ng-model="editDatas.duration"> <span
+								class="alert-danger"
+								ng-show="streamForm.duration.$error.pattern">Please enter
+								Integer only</span>
+						</div>
+						<div class="col-sm-4 pull-right">
+							<span class="btn btn-primary col-sm"><input type="submit"
+								ng-show="true" name="Submit" value="Submit"
+								class="btn btn-primary col-sm" id="btn-Upload"> <span
+								id="submitLoader" style="display: none;"
+								class="btn btn-primary col-sm"> <i
+									class="fa fa-spinner fa-spin"></i>
+							</span> </span>
+						</div>
+						<div class="row-fluid clearfix">
+
+							<div class="row-fluid clearfix">&nbsp;</div>
+							<div class="form-group col-sm-9 pull-right">
+								<div class="col-sm-2 pull-right"></div>
+
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="container">
+<div class="mainy">
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="awidget full-width">
+
+						<div class="page-content blocky" ng-controller="SortableCTRL"
+							ng-hide="isLoginPage()">
+							<div class="">
+								<div class="mainy">
+									<div class="row">
+										<div class="col-md-12">
+											<div class="awidget-head"></div>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-md-13">
+									<div class="calendarNav tab-pane fade in active"
+										id="standardNav">
+										<div>
+											<div class="col-sm-2 pull-right">
+												<button type="button" class="btn btn-default col-sm-12"
+													ng-click="addStream()">Add Stream</button>
+											</div>
+											<div class="col-sm-2 pull-right">
+												<button type="button" class="btn btn-default col-sm-12"
+													ng-click="showRunningJobs()">Running Jobs</button>
+												<div class="row">&nbsp;</div>
+											</div>
+											<h4>Saved Consumers</h4>
+
+
+										</div>
+										<div class="row">&nbsp;</div>
+										
+										<div>
+											<span id="schemarunID" style="color: green"></span>
+										</div>
+										<table  width="100%" class="table table-bordered" ng-show="viewing " 
+											ts-wrapper>
+											<col style="width:12%">
+											<col style="width:10%">
+											<col style="width:15%">
+											<col style="width:8%">
+											<col style="width:10%">
+											<col style="width:15%">
+											<col style="width:9%">
+											<col style="width:10%">
+											<col style="width:13%">
+											<thead>
+												<tr>
+													<th ts-criteria="Consumer_Name|lowercase">Consumer Name</th>
+													<th ts-criteria="Topic|lowercase">Topic</th>
+													<th ts-criteria="Hostname|lowercase">Hostname</th>
+													<th ts-criteria="Port|lowercase">Port</th>
+													<th ts-criteria="Group_ID|lowercase">Group ID</th>
+													<th ts-criteria="Output_Location|lowercase">Output
+														Location</th>
+													<th ts-criteria="duration|lowercase">Duration</th>
+													<th ts-criteria="Jobs|lowercase">Running Jobs</th>
+													<th>Operations</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr
+													ng-class="{'test': $index == 0 && fromAutoSchema == true }"
+													ng-repeat="obj in detailStreaming | orderObjectBy:orderByField:reverse"
+													ts-repeat ng-hide="obj.isRowHidden">
+													<td >{{obj.Consumer_Name}}</td>
+													<td >{{obj.Topic}}</td>
+													<td >{{obj.Hostname}}</td>
+													<td >{{obj.Port}}</td>
+													<td >{{obj.Group_ID}}</td>
+													<td >{{obj.Output_Location}}</td>
+													<td >{{obj.duration}}</td>
+													<td style="cursor: pointer"
+														ng-click="showDrivers(obj.Consumer_Name)"><span
+														>
+															{{obj.count}}</span></td>
+													<td><a ng-click="addUpdateStream(obj.id)" title="Edit"
+														style="cursor: pointer"><span
+															class="fa fa-pencil-square-o color"></span></a>&nbsp; <a
+														title="Delete" style="cursor: pointer"
+														ng-click="showconfirm(obj.id,obj)"><span
+															class="fa fa-trash color"></span></a> &nbsp; <a
+														class="glyphicon glyphicon-play" data-toggle="modal"
+														title="Run Now" style="cursor: pointer"
+														ng-click="runStream(obj)" id="{{obj.id}}play"></a><span
+														id="{{obj.id}}loader" style="display: none;"><i
+															class="fa fa-spinner fa-spin"></i></span> &nbsp;</td>
+												</tr>
+
+											</tbody>
+										</table>
+										<div class="row clearfix">&nbsp;</div>
+										<div class="row">&nbsp;</div>
+										<form class="form-horizontal col-sm-11" role="form"
+											name="form" ng-show="editing"
+											ng-submit="saveAddUpdateDataSet(editData)">
+											<div class="row-fluid clearfix">
+												<div class="row-fluid">&nbsp;</div>
+												<div class="col-sm-6">
+													<div class="form-group col-sm-12">
+														<label for="genomeName" class="col-sm-4 control-label">Consumer
+															Name<sup><span aria-hidden="true"
+																class="glyphicon glyphicon-asterisk alert-danger"></span></sup>
+														</label>
+														<div class="col-sm-8">
+															<input type="text" class="form-control"
+																ng-model="editData.Consumer_Name" id="genomeName"
+																placeholder="Name"
+																pattern="^[a-zA-Z][a-zA-Z0-9- _\.]{1,50}$"
+																required="required">
+														</div>
+													</div>
+
+													<div class="form-group col-sm-12">
+														<label for="Schema" class="col-sm-4 control-label">Hostname</label>
+
+														<div class="col-sm-8">
+															<input type="text" class="form-control"
+																ng-model="editData.Hostname" id="genomeName"
+																placeholder="Name" required="required">
+														</div>
+
+													</div>
+													<div class="col-sm-12">
+														<div class="form-group col-sm-12">
+															<label for="Description" class="col-sm-4 control-label">Port</label>
+															<div class="col-sm-8">
+																<input type="text" class="form-control"
+																	ng-model="editData.Port" id="genomeName"
+																	placeholder="Name" required="required">
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="clearfix row-fluid ">
+													<div class="col-sm-6">
+														<div class="form-group col-sm-12">
+															<label for="Location" class="col-sm-4 control-label">Group_ID<sup><span
+																	aria-hidden="true"
+																	class="glyphicon glyphicon-asterisk alert-danger"></span></sup></label>
+															<div class="col-sm-8">
+																<input type="text" class="form-control"
+																	ng-model="editData.Group_ID" id="Group_ID"
+																	placeholder="Group_ID" required="required">
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group col-sm-12">
+
+															<label for="Location" class="col-sm-4 control-label">Output_Location
+																<sup><span aria-hidden="true"
+																	class="glyphicon glyphicon-asterisk alert-danger"></span></sup>
+															</label>
+															<div class="col-sm-8">
+																<input type="text" placeholder="Output_Location"
+																	class="form-control"
+																	ng-model="editData.Output_Location" ng-required="true">
+															</div>
+
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group col-sm-12">
+
+															<label for="Location" class="col-sm-4 control-label">Topic
+																<sup><span aria-hidden="true"
+																	class="glyphicon glyphicon-asterisk alert-danger"></span></sup>
+															</label>
+															<div class="col-sm-8">
+																<input type="text" placeholder="Topic"
+																	class="form-control" ng-model="editData.Topic"
+																	ng-required="true">
+															</div>
+
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group col-sm-12">
+
+															<label for="Location" class="col-sm-4 control-label">Duration
+																<sup><span aria-hidden="true"
+																	class="glyphicon glyphicon-asterisk alert-danger"></span></sup>
+															</label>
+															<div class="col-sm-8">
+																<input type="text" placeholder="Duration"
+																	class="form-control" ng-model="editData.duration"
+																	ng-required="true">
+															</div>
+
+														</div>
+													</div>
+
+
+
+												</div>
+
+
+
+
+
+												<div class="clearfix">&nbsp;</div>
+												<div class="row-fluid clearfix">
+													<div class="form-group col-sm-9 pull-right">
+														<div class="col-sm-2 pull-right">
+															<button type="button" class="btn btn-default col-sm-12"
+																ng-click="cancelADD()">Cancel</button>
+														</div>
+														<div class="col-sm-2 pull-right">
+															<button type="submit" class="btn btn-primary col-sm-12">Save</button>
+														</div>
+													</div>
+												</div>
+
+											</div>
+											</form>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+						<!-- Modal -->
+						<div class="modal fade" id="deleteConfirmModal" tabindex="-1"
+							role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h4 class="modal-title" id="deleteLabel">Delete Schema:
+											{{Obj.Consumer_Name}}</h4>
+									</div>
+									<div class="modal-body">
+										<p>Do you want to delete?</p>
+
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-danger"
+											id="deleteConfirm" data-ng-click="delete1()">Yes</button>
+										<button type="button" class="btn btn-success"
+											data-dismiss="modal">No</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="modal fade" id="alertMessage" tabindex="-1"
+							role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+										<center>
+											<p style="color: red">Cannot Delete ! First Stop the
+												Running Jobs</p>
+
+										</center>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="modal fade" id="StreamDrivers" tabindex="-1"
+							role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						                        <span aria-hidden="true">&times;</span>
+					                    </button>
+					                    <h4 class="modal-title" id="StreamJ">Streaming Jobs</h4>
+
+									</div>
+									<div class="modal-body">
+
+
+										<table width="100%" class="table table-bordered" ts-wrapper>
+											<col style="width:20%">
+											<col style="width:25%">
+											<thead>
+												<tr>
+													<th ts-criteria="id|lowercase" ts-default>Job Id</th>
+													<th ts-criteria="consumerName|lowercase">Consumer Name</th>
+													<th ts-criteria="startAt|lowercase">start At</th>
+													<th ts-criteria="startBy|lowercase">start By</th>
+													<th>Operations</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr
+													ng-class="{'test': $index == 0 && fromAutoSchema == true   }"
+													ng-repeat="obj in detailDriver | orderObjectBy:orderByField:reverse"
+													ts-repeat ng-hide="obj.isRowHidden">
+													<td >{{obj.id}}</td>
+													<td  >{{obj.consumerName}}</td>
+													<td >{{obj.startAt}}</td>
+													<td >{{obj.startBy}}</td>
+											
+													<td ng-show="allconsumer"><a class="fa fa-stop color"
+														ng-click="stopDriver(obj.id,'')"
+														title="Stop" style="cursor: pointer"></a> <span
+														id="{{obj.id}}loader" style="display: none;"><i
+															class="fa fa-spinner fa-spin"></i></span></td>
+															
+															<td ng-hide="allconsumer"><a class="fa fa-stop color"
+														ng-click="stopDriver(obj.id,obj.consumerName)"
+														title="Stop" style="cursor: pointer"></a> <span
+														id="{{obj.consumerName}}loader" style="display: none;"><i
+															class="fa fa-spinner fa-spin"></i></span></td>
+												</tr>
+
+												</div>
+											</tbody>
+										</table>
+
+
+
+
+
+
+									</div>
+									<!--  <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"></pagination>-->
+									<div class="modal-footer">
+										<button type="button" ng-click="closeModal()"
+											class="btn btn-default" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="row clearfix">&nbsp;</div>
+						<div class="row">&nbsp;</div>
+
+					
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

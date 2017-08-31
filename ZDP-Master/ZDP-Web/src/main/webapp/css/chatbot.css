@@ -1,0 +1,46 @@
+
+
+/*
+overwrite the existing bootstrap value
+*/
+.popover{
+	max-width: 1400px !important; 
+}
+
+
+/*
+chatbot css class
+*/
+
+
+.cbHead-nav{
+	margin: 7px 12px;
+    padding-left: 0;
+    list-style-type: none;
+    float: right !important;
+}
+.cbHead-nav>li {
+	margin-right: 5px;
+}
+
+.cbChat{
+	height: 315px;
+	overflow-y: scroll;
+	max-height: 360px;
+
+}
+.cbtext{
+	max-width: 100%;
+    border-radius: 20px;
+    
+}
+
+#img-upload input[type="file"] {
+    display: none !important;
+}
+
+.msgright{
+	text-align: right;
+}
+
+

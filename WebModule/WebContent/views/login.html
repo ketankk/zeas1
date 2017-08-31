@@ -1,0 +1,126 @@
+<section ng-controller="userController">
+	<div class="container" ng-show="loginForm" id="loginform">
+	<div class="col-md-7 col-sm-7">
+	<h1 class="logo">WELCOME TO ZEAS</h1>
+<h2>Z Enterprise analytics System</h2>
+<h2 class="tagline">Big Data Enriched. Tranformed. Analyzed.</h2>
+<figure><figcaption>A Product By: </figcaption>
+  <img src="images/ITC_Infotech_logo.svg.png" alt="ITC Infotech Logo" />
+  
+</figure>
+
+	</div>
+		<div id="loginbox"
+			class="mainbox col-md-5 col-sm-5">
+			<div class="panel">
+				<div class="panel-heading">
+					<div class="panel-title"><h2>Sign In</h2></div>
+
+				</div>
+				<div ng-show="wrgPass" id="login-alert" class="alert alert-danger">
+					<p>Userid or password didn't match.Try
+						again</p>
+				</div>
+				<div ng-show="conMail" id="login-alert" class="alert alert-success">
+					<p>your new password is 'login@123'.Please reset your passwod</p>
+				</div>
+				<div ng-show="resPass" id="login-alert" class="alert alert-success">
+					<p>New Password has been reset</p>
+				</div>
+				<div class="panel-body">
+
+
+
+					<form id="loginform2" class="form-horizontal" role="form" name="loginForm"
+						ng-submit="submitUserDetails()" >
+
+						<div  class="input-group login-group">
+							<span class="input-group-addon"><i
+								class="glyphicon glyphicon-user"></i></span> <input id="login-username"
+								type="text" class="form-control" name="username" value=""
+								placeholder="username or email" ng-model="username" autofocus="autofocus" focus-me="loginForm" required />
+						</div>
+						<div class="input-group">&nbsp;</div>
+						<div class="input-group login-group">
+							<span class="input-group-addon"><i
+								class="glyphicon glyphicon-lock"></i></span> <input id="login-password"
+								type="password" class="form-control" name="password"
+								placeholder="password" ng-model="password" required />
+						</div>
+
+
+
+						<div class="input-group">
+							<div class="checkbox whiteLink">
+								<span><input
+									id="login-remember" type="checkbox" name="remember" value="1">
+									Remember me</span>
+							</div>
+							<div></div>
+							<div class="input-group">&nbsp;</div>
+							<div>
+								<span><a href="#"
+									data-toggle="modal" data-target="#loginModal" class="whiteLink"
+									ng-click="forgetPass();">Forgot password?</a></span> <span
+									><!--<a href="#" class="link"
+									data-target="#password_modal">Reset</a>--></span>
+							</div>
+							<div class="input-group">&nbsp;</div>
+						</div>
+
+
+						<div class="form-group">
+							<!-- Button -->
+
+							<div class="col-sm-7 col-sm-7 controls">
+								<input type="submit" id="btn-login"
+									class="btn btn-primary btn-lg btn-block" name="login"
+									value="Login" ng-click="showOtherTab = true">
+
+
+							</div>
+						</div>
+
+
+
+					</form>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+		<div class="modal fade" id="forgetModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">Enter your User Name</h4>
+					</div>
+					<div class="modal-body">
+					<form ng-submit="loadLoginConfirm(forgetUser)">
+						<div class="form-group">
+							<!-- <input type="email" class="form-control input-lg" placeholder="Email" ng-model="userEmail" required/>-->
+							<input type="text" class="form-control input-lg" name="Email" ng-model="forgetUser"
+								value="" placeholder="username" required />
+						</div>
+
+						<div class="form-group pull-right">
+							<input type="submit" id="btn-login"
+								class="btn btn-primary" name="reset"
+								value="Let reset my password">
+						</div>
+					</form>
+					</div>
+					<div class="modal-footer">
+					</div>
+				</div>
+			</div>
+		</div>
+	
+</section>

@@ -1,0 +1,917 @@
+<div class="page-content blocky" my-directive
+	ng-controller="dataSchemaSource">
+<script type="text/ng-template" id="myModalContent.html">
+		<div modal="shouldBeOpen">
+				<div class="modal-header modal-headerSchemaAuto">
+					<button data-dismiss="modal" class="close" type="button" ng-click="closeModal()">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h4 id="myModalDetailsLabel" class="modal-title ng-binding"><b>Configure Data Source:</b></h4>
+					
+
+				</div>
+				<div class="modal-body modal-bodySchemaAuto">
+				<div class="col-sm-14"><span class="red" ng-model="errorCode">{{errorCode}}</span></div>
+     			 <input id="first" type="radio" name="fileSys" ng-model="fileSys" value="file" checked title="CSV, XLS, XML & JSON is supported now">
+				 <label for="File" title="CSV, XLS, XML & JSON is supported now">File</label>
+					&nbsp;&nbsp;&nbsp;
+					<input id="first" type="radio" name="fileSys" ng-model="fileSys" value="RDBMS">
+					<label for="RDBMS">RDBMS</label>
+					&nbsp;&nbsp;&nbsp;
+
+					<div ng-show="fileSys == 'file'">
+						<div class="row-fluid clearfix">&nbsp;</div>
+						<form role="form" class="form" id="fileUploadForm"
+							ng-model="fileUploadForm" name="fileUploadForm">
+							<div class="form-group col-sm-12"><div class="form-group col-sm-3"><label for="File">File Type</label></div><div class="form-group col-sm-4"><select class="form-control"
+							ng-options="sourceFormat[k] as t for (k,t) in sourceFormat"
+							ng-model="editData.format" name="SourcerFormat"></select></div></div>
+							<div ng-show="editData.format == 'Fixed Width'">
+							<div class="col-sm-3">
+       						 <label for="column">No of column<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-9">
+       						 <label for="Fixed values">Fixed Width Values(comma separated)<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-3">
+							<input type="text" class="form-control" id="noofColumn" placeholder="No of Column" ng-model="editData.noofColumn" required="required">
+   						 </div>
+						<div class="form-group col-sm-9">
+							<input type="text" class="form-control" id="fixedLen" placeholder="Fixed Width Values" ng-model="editData.fixedValues" required="required">
+							<span class="alert-danger" ng-show="editData.fixedValues.length != editData.noofColumn*2 -1 && editData.noofColumn != undefined " >Please
+									enter length for all column</span>
+   						 </div></div>
+						<div ng-show="editData.format == 'Delimited'">
+						<div class="col-sm-5">
+       						 <label for="row">Row delimiter<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Column">Column delimiter<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<select name="Delimiter" ng-model="editData.rowDeli" ng-options="delimiterArr[k] as t for (k,t) in delimiterArr" class="form-control"></select>
+   						 </div>
+						<div class="form-group col-sm-5">
+							<select name="Delimiter" ng-model="editData.colDeli" ng-options="delimiterArr[k] as t for (k,t) in delimiterArr" class="form-control"></select>
+   						 </div></div>
+							<div class="form-group col-sm-6">
+						
+								<input type="text" required="required" ng-show="editData.format != 'Delimited' && editData.format != 'Fixed Width'"
+									ng-pattern='/^([a-zA-Z]:)?(\\{2}|\/)?([a-zA-Z0-9\\s_@-^!#$%&amp;+={}\[\]]+(\\{2}|\/)?)+(\.xls||.csv||.xml||.json||.xlsx+)?$/'
+									name="filepath" placeholder="Filepath" id="filepath"
+									ng-model="editData.filepath" class="form-control"
+									autofocus="autofocus" focus-me="shouldBeOpen">
+									 <span ng-show="fileUploadForm.filepath.$error.pattern && editData.format != 'Delimited' && editData.format != 'Fixed Width'"
+									class="alert-danger"
+									>Please
+									enter valid file</span>
+									<input type="text" required="required" ng-show="editData.format == 'Delimited' || editData.format == 'Fixed Width'"
+									name="filepath1" placeholder="Filepath" id="filepath"
+									ng-model="editData.filepath" class="form-control"
+									autofocus="autofocus" focus-me="shouldBeOpen">
+									
+							</div>
+							<div class="form-group col-sm-4">
+								<button ng-click="upload('file')" ng-show="true" value="Upload"
+									name="Upload" class="btn btn-primary col-sm-12" id="btn-Upload"
+									ng-disabled="fileUploadForm.filepath.$error.pattern && editData.format != 'Delimited' && editData.format != 'Fixed Width'">
+									Upload<span id="uploadLoader" style="display: none;">ing...&nbsp;
+										<i class="fa fa-spinner fa-spin"></i>
+									</span>
+								</button>
+
+							</div>
+<div class="row-fluid clearfix">
+
+								<div class="row-fluid clearfix">&nbsp;</div>
+								<div class="form-group col-sm-9 pull-right">
+									<div class="col-sm-2 pull-right">
+										
+									</div>
+
+								</div>
+							</div>
+					</div>
+							</form>
+
+					</div>
+					
+					<div ng-show="fileSys == 'RDBMS'">
+						<div class="row-fluid clearfix">&nbsp;</div>
+						<form role="form" class="form" id="dbform"
+							ng-model="dbform" name="RDBMSForm" ng-submit="upload('DB')">
+						<div class="col-sm-3">
+
+       						 <label for="Database">DB Type<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="form-group col-sm-5">
+      					  <!--<input type="text" class="form-control" id="Database" placeholder="Database">-->
+							<select name="Database" ng-model="editData.dbType" ng-options="databaseType[k] as t for (k,t) in databaseType" class="form-control" ng-change="selectPort(editData.dbType);"></select>
+   						 </div>
+							<div class="col-sm-5">
+       						 <label for="Host">Host Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Host">Port Number<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="Host" placeholder="Host Name" ng-model="editData.hostName" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="Port" placeholder="Port Number" ng-model="editData.port" required="required">
+   						 </div>
+							<div class="col-sm-5">
+       						 <label for=">DB Name">DB Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Table Name">Table Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="DBName" placeholder="DB Name" ng-model="editData.dbName" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="TableName" placeholder="Table Name" ng-model="editData.tableName" required="required">
+   						 </div>
+						<div class="col-sm-3">
+
+       						 <label for="username">User name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="form-group col-sm-8">
+
+      					  <input type="text" class="form-control" id="username" placeholder="username" ng-model="editData.userName" required="required">
+
+   						 </div>
+
+    				<div class="col-sm-3">
+
+      				  <label for="inputPassword">Password</label></div>
+							<div class="form-group col-sm-8">
+
+      				  <input type="password" class="form-control" id="inputPassword" placeholder="Password" ng-model="editData.password" >
+
+    				</div>
+					<div class="col-sm-12">
+ 					<span class="btn btn-primary pull-right"><input type="submit" ng-show="true" name="Connect" value="Connect" class="btn btn-primary" id="btn-Upload">
+									 <span id="connectLoader" style="display: none;" class="btn btn-primary col-sm">
+										<i class="fa fa-spinner fa-spin"></i>
+									</span>
+					</span></div>
+					<div class="row-fluid clearfix">
+
+								<div class="row-fluid clearfix">&nbsp;</div>
+								<div class="form-group col-sm-9 pull-right">
+									<div class="col-sm-2 pull-right">
+										
+									</div>
+
+								</div>
+							</div>
+					</div>
+							
+				</div></form></div></div>
+					<div ng-show="fileSys == 'Streaming'">
+						<div class="row-fluid clearfix">&nbsp;</div>
+						<form role="form" class="form" id="streamForm"
+							ng-model="streamForm" name="streamForm" ng-submit="submitStream(editDatas)">
+						<div class="col-sm-3">
+
+       						 <label for="Database">Consumer Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="form-group col-sm-7">
+      					  <input type="text" class="form-control" id="Customer" placeholder="Consumer Name" ng-model="editDatas.Consumer_Name" required="required">
+   						 </div>
+						<div class="col-sm-3">
+       						 <label for="Table Name">Topic<sup><span class="glyphicon glyphicon-asterisk red" aria-hidden="true"></span></sup></label></div><div class="form-group col-sm-7">
+							<input type="text" class="form-control ng-pristine ng-invalid ng-invalid-required" id="Topic" placeholder="Topic" ng-model="editDatas.Topic" required="required">
+   						 </div>
+							<div class="col-sm-5">
+       						 <label for="Host">Host Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Host">Port Number<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="Host" placeholder="Host Name" ng-model="editDatas.Hostname" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" ng-pattern="/^[0-9]{1,7}$/" required="required" id="Port" name="port" placeholder="Port Number" ng-model="editDatas.Port"  >
+								<span class="alert-danger" ng-show="streamForm.port.$error.pattern">Please enter Integer only</span>
+   						 </div>
+							<div class="col-sm-5">
+       						 <label for=">DB Name">Group Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Table Name">Output Location<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="GroupName" placeholder="Group Name" ng-model="editDatas.Group_ID" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="OutputLocation" placeholder="Output Location" ng-model="editDatas.Output_Location" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<b>Duration:</b><input type="text" class="form-control" ng-pattern="/^[0-9]{1,7}$/" required="required" id="duration" name="duration" placeholder="Duration" ng-model="editDatas.duration"  >
+								<span class="alert-danger" ng-show="streamForm.duration.$error.pattern">Please enter Integer only</span>
+   						 </div>
+						<div class="col-sm-4 pull-right">
+ 					<span class="btn btn-primary col-sm"><input type="submit" ng-show="true" name="Submit" value="Submit" class="btn btn-primary col-sm" id="btn-Upload">
+									 <span id="submitLoader" style="display: none;" class="btn btn-primary col-sm">
+										<i class="fa fa-spinner fa-spin"></i>
+									</span>
+					</span></div>
+							<div class="row-fluid clearfix">
+
+								<div class="row-fluid clearfix">&nbsp;</div>
+								<div class="form-group col-sm-9 pull-right">
+									<div class="col-sm-2 pull-right">
+										
+									</div>
+
+								</div>
+							</div>
+					</div>
+				</div></form>
+<!--
+					<div ng-show="fileSys == 'Streaming'">
+						<div class="row-fluid clearfix">&nbsp;</div>
+						<form role="form" class="form" id="streamForm"
+							ng-model="streamForm" name="streamForm" ng-submit="submitStream(editDatas)">
+						<div class="col-sm-3">
+
+       						 <label for="Database">Customer Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="form-group col-sm-7">
+      					  <input type="text" class="form-control" id="Customer" placeholder="Customer Name" ng-model="editDatas.Consumer_Name" required="required">
+   						 </div>
+						<div class="col-sm-3">
+       						 <label for="Table Name">Topic<sup><span class="glyphicon glyphicon-asterisk red" aria-hidden="true"></span></sup></label></div><div class="form-group col-sm-7">
+							<input type="text" class="form-control ng-pristine ng-invalid ng-invalid-required" id="Topic" placeholder="Topic" ng-model="editDatas.Topic" required="required">
+   						 </div>
+							<div class="col-sm-5">
+       						 <label for="Host">Host Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Host">Port Number<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="Host" placeholder="Host Name" ng-model="editDatas.Hostname" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" ng-pattern="/^[0-9]{1,7}$/" required="required" id="Port" name="port" placeholder="Port Number" ng-model="editDatas.Port"  >
+								<span class="alert-danger" ng-show="streamForm.port.$error.pattern">Please enter Integer only</span>
+   						 </div>
+							<div class="col-sm-5">
+       						 <label for=">DB Name">Group Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+							<div class="col-sm-5">
+       						 <label for="Table Name">Output Location<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label></div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="GroupName" placeholder="Group Name" ng-model="editDatas.Group_ID" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<input type="text" class="form-control" id="OutputLocation" placeholder="Output Location" ng-model="editDatas.Output_Location" required="required">
+   						 </div>
+						<div class="form-group col-sm-5">
+							<b>Duration:</b><input type="text" class="form-control" ng-pattern="/^[0-9]{1,7}$/" required="required" id="duration" name="duration" placeholder="Duration" ng-model="editDatas.duration"  >
+								<span class="alert-danger" ng-show="streamForm.duration.$error.pattern">Please enter Integer only</span>
+   						 </div>
+						<div class="col-sm-4 pull-right">
+ 					<span class="btn btn-primary col-sm"><input type="submit" ng-show="true" name="Submit" value="Submit" class="btn btn-primary col-sm" id="btn-Upload">
+									 <span id="submitLoader" style="display: none;" class="btn btn-primary col-sm">Connecting...
+										<i class="fa fa-spinner fa-spin"></i>
+									</span>
+					</span></div></div></form>
+							<div class="row-fluid clearfix">
+
+								
+								<div class="form-group col-sm-9 pull-right">
+									<div class="col-sm-2 pull-right">
+										
+									</div>
+
+								</div>
+							</div>
+					</div>
+				
+				<!--<div class="modal-footer">
+					
+
+					<button type="button" ng-click="closeModal()" class="btn btn-default">Close</button>
+
+				</div>--></div>
+			
+	</script>
+	<div class="container">
+
+
+		<div class="mainy">
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="awidget full-width">
+
+						<div class="page-content blocky" ng-controller="SortableCTRL"
+							ng-hide="isLoginPage()">
+							<div class="container">
+								<div class="mainy">
+									<div class="row">
+										<div class="col-md-12">
+											<div class="awidget-head">
+												<!-- <div class="col-md-8">
+
+													<ul class="nav nav-wizard" id='sortable'>
+														<li ng-repeat="obj in dataTab"
+															ng-class="{ active: $route.current.activetab == '{{obj.Tab}}'}"><a
+															ng-href="/{{obj.pageUrl}}" ng-click="event">{{obj.sourceName}}</a></li>
+													</ul>
+												</div> -->
+												<div class="row col-lg-12">
+													<!-- <div class="col-lg-2 colPadding"><a  title="Add a Schema" ng-click="addUpdateSchema()" class="btn btn-primary pull-right col-lg-12">Add Schema</a></div>
+						<div class="col-lg-2 colPadding">&nbsp;</div> -->
+												 <div class="col-md-5">
+												<div ng-show="addSchema" class="col-lg-12"><form class="ng-pristine ng-valid">
+															    <div class="form-group">
+															      <div class="input-group col-md-8">
+															        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+															        <input type="text" class="form-control ng-pristine ng-valid" placeholder="Search" ng-model="query[queryBy]">
+															      </div>     
+						                            </div></form></div></div>
+						                            <div class="col-md-6">
+													<div class="col-md-6 pull-right" ng-show="addSchema">
+
+														<div class="input-group">
+															<span class="input-group-addon" ng-click="addUpdateSchema();">Add Schema</span> <select
+																class="form-control" ng-model="editData.addSchemaMed" ng-change="addUpdateSchema();">
+																<option ng-repeat="v in addSchemaMed" >{{v.name}}</option>
+															</select>
+														</div></div>
+									
+														<!-- 											
+															<div class="input-group">
+					<select class="form-control"
+						ng-options="addSchemaMed[k] as t for (k,t) in addSchemaMed"
+						ng-model="editData.addSchemaMed" name="addSchemaMed"></select>
+
+				
+
+					<button type="button" 
+						ng-click="addUpdateSchema();" class="btn btn-default input-group-addon">OK</button>
+
+				</div> -->
+
+
+
+													</div><div class="col-md-1"><a href="archiveDetails/" title="Restore Schema"><div class="logo" ><i class="fa fa-archive fa-2x color"></i></div></a></div>
+													<!--div class="col-lg-3 pull-right">
+							
+														<div class="input-group">
+														<span class="input-group-addon" ng-click="stramORDriver();">Streaming</span>
+														<select class="form-control" ng-model="model.link" ng-change="stramORDriver(model.link);">
+														 <option value="Select">Select</option>
+														  <option value="Streaming">Stream Consumers</option>
+														  <option value="Driver">Stream Jobs</option>
+														</select>
+													</div> </div-->
+												</div>
+											</div>
+											<!--   <div class="col-md-3">
+			             <div class="input-group form">
+			                    <input type="text" placeholder="Something..." class="form-control">
+			                    <span class="input-group-btn">
+			                    <button type="button" class="btn btn-info">Search</button>
+			                    </span>
+			              </div>
+			         </div>-->
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- <ng-include src="'includes/progressbar.html'" class="clearfix" ng-show="editing"></ng-include> -->
+						</div>
+
+
+						<div ng-show="viewing">
+							<div class="row clearfix">&nbsp;</div>
+							<!-- <div class="col-xs-3"><div class="input-group">
+								<select ng-model="model.link" ng-change="stramORDriver(model.link);">
+								 <option value="Select">Select</option>
+								  <option value="Streaming">Streaming</option>
+								  <option value="Driver">Driver</option>
+								</select>
+							</div> </div>
+							<div class="row clearfix">&nbsp;</div>
+							<div class="row clearfix">&nbsp;</div> -->
+							<div>
+								<div class="calendarNav tab-pane fade in active"
+									id="standardNav">
+									<div ng-show="totalSourcer.length == 0">
+										<div>
+											<h4 class="text-center">No Schema found</h4>
+										</div>
+									</div>
+									<div>
+										<span id="schemarunID" style="color: green"></span>
+									</div>
+									 <!-- <form class="ng-pristine ng-valid">
+									    <div class="form-group">
+									      <div class="input-group col-md-2">
+									        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+									        <input type="text" ng-model="query[queryBy]" placeholder="Search" class="form-control ng-pristine ng-valid">
+									      </div>      
+									    </div>
+									    <div class="input-group col-md-2">
+									       <select ng-model="queryBy">
+							                    <option value="$"></option>
+							                    <option value="schemaName">schema Name</option>
+							                    <option value="sourceFormat">Source Type</option>
+							                    <option value="schemaModificationDate">Last Modified</option>
+							                </select>  
+									      </div>      
+									</form> -->
+									<!-- <div class="form-group row-fluid clearfix">&nbsp;</div> -->
+									<!-- <table>
+							        <tr>
+							            <td align="right">Search :</td>
+							            <td><input ng-model="query[queryBy]" /></td>
+							        </tr>           
+							        <tr>
+							            <td align="right">Search By :</td>
+							            <td>
+							                <select ng-model="queryBy">
+							                    <option value="$"></option>
+							                    <option value="schemaName">schemaName</option>
+							                   
+							                </select>   
+							            </td>
+							        </tr>
+							    </table> -->
+									<table class="table table-bordered profile"
+										ng-show="totalSourcer > 0" ts-wrapper>
+										<thead>
+											<tr>
+												<th ts-criteria="schemaName|lowercase">Schema</th><!-- ts-default -->
+												<th ts-criteria="sourceFormat|lowercase">Source Type</th>
+												<th ts-criteria="sourcePath|lowercase">Source</th>
+												<th ts-criteria="dataSetTargetPath|lowercase">Dataset</th>
+												<th ts-criteria="schedulerFrequency|lowercase">Schedule</th>
+												<th ts-criteria="schemaModificationDate|lowercase">Last Modified</th>
+												<th>Operations <div class="pull-right"><button class="btn btn-default btn-xs btn-filter" ng-click="filterRow = !filterRow"><span class="glyphicon glyphicon-filter"></span> Filter</button></div></th>
+											</tr>
+											<tr ng-show="filterRow">
+										     <td><input class="form-control" type="text" placeholder="Schema" ng-model="query['schemaName']"></td>
+												<td><select class="form-control"  ng-model="query['sourceFormat']" name="SourcerFormat">
+												<option value=''>All</option>
+												<option ng-repeat="item in sourceFormat"
+												value="{{item}}">{{item}}</option>
+												<td><input class="form-control" type="text" placeholder="Source" ng-model="query['sourcePath']"></td>
+												<td><input class="form-control" type="text" placeholder="Dataset" ng-model="query['dataSetTargetPath']"></td>
+												<td><select class="form-control" ng-model="query['schedulerFrequency']" id="frequency">
+														<option value=''>All</option>
+														<option ng-repeat="item in frequencyArr" value="{{item}}">{{item}}</option></select></td>
+												<td> <input class="form-control" type="text" placeholder="Last Modified" ng-model="query['lastModified']"></td>
+												<td></td>
+										    </tr>
+										</thead>
+										 
+										<tbody>
+										
+											<tr
+												ng-class="{'test': $index == 0 && fromAutoSchema == true }"
+												ng-repeat="obj in detaildataSchema | orderObjectBy:orderByField:reverse | filter:query" ts-repeat
+												ng-hide="obj.isRowHidden">
+													<td ng-model="obj.schemaName"><span class="btn-link" data-toggle="modal"
+													data-target="#detailModal" ng-click="fetchDetails(obj.schemaId)">{{obj.schemaName}}</span>&nbsp;&nbsp;<i class="fa fa-database color" ng-show="obj.sourceFormat == 'MySQL'" ng-click="addUpdateSchema(obj.datasourceid,'DB');" style="cursor: pointer"></i></td>
+													<td>{{obj.sourceFormat}}</td>
+													<td contenteditable="true" ng-model="obj.sourcePath" title="{{obj.sourcePath}}"></td>
+													<td contenteditable="true" ng-model="obj.dataSetTargetPath" title="{{obj.dataSetTargetPath}}"></td>
+													<td><select class="form-control" ng-model="obj.schedulerFrequency"
+														id="frequency" ng-options="obj for obj in frequencyArr"
+														></select></td>
+													<td ng-model="obj.lastModified">{{obj.lastModified}}</td>
+													<td><a ng-click="addUpdateSchema(obj.schemaId)" title="Edit" href=""><span
+														class="fa fa-pencil-square-o color"></span></a>&nbsp; <a
+													title="Delete" style="cursor: pointer"
+													ng-click="showconfirm(obj.scedulerID,obj)"><span
+														class="fa fa-trash color"></span></a> &nbsp; <a
+													class="glyphicon glyphicon-play" data-toggle="modal"
+													title="Run Now" href=""
+													ng-click="runScheduler(obj.scedulerID,obj.name,obj.schemaId)"													
+													id="{{obj.schemaId}}play"></a> <span id="{{obj.schemaId}}loader"
+													style="display: none;"><i
+														class="fa fa-spinner fa-spin"></i></span>
+														&nbsp;
+														<a class="label label-success label-as-badge" ng-show="obj.jobStatus == 'Completed'" title="Completed" ng-click="getIngestionLog(obj.scedulerID)" href="">&nbsp;</a>
+														<a class="label label-default label-as-badge" ng-show="obj.jobStatus == 'New'" title="New">&nbsp;</a>
+														<a class="label label-danger label-as-badge" ng-show="obj.jobStatus == 'Failed'" title="Failed" ng-click="getIngestionLog(obj.scedulerID)" href="">&nbsp;</a>
+														<a class="label label-warning label-as-badge" ng-show="obj.jobStatus == 'Started'" title="Progress" ng-click="getIngestionLog(obj.scedulerID)" href="">&nbsp;</a> 
+														</td> 
+											</tr>
+											<!-- Modal -->
+											<div class="modal fade" id="detailModal" tabindex="-1"
+												role="dialog" aria-labelledby="myModalLabel"
+												aria-hidden="true">
+												<div class="modal-dialog">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal">
+																<span aria-hidden="true">&times;</span><span
+																	class="sr-only">Close</span>
+															</button>
+															<h4 class="modal-title" id="myModalDetailsLabel">Schema
+																Details: {{jData.name}}</h4>
+
+														</div>
+														<div class="modal-body">
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Name</div>
+																<div class="col-md-8">{{data.name}}</div>
+															</div>
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Description</div>
+																<div class="col-md-8">{{jData.description}}</div>
+															</div>
+
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Created on</div>
+																<div class="col-md-8">{{data.createdDate | date:'dd-MM-yyyy HH:mm:ss'}}</div>
+															</div>
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Updated By</div>
+																<div class="col-md-8">{{data.updatedBy}}</div>
+															</div>
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Last Updated</div>
+																<div class="col-md-8">{{data.updatedDate | date:'dd-MM-yyyy HH:mm:ss'}}</div>
+															</div>
+														</div>
+														<!-- <div class="modal-footer">
+															<button type="button" class="btn btn-default"
+																data-dismiss="modal">Close</button>
+
+														</div> -->
+													</div>
+												</div>
+											</div>
+
+
+											<div class="modal fade" id="deleteConfirmModal" tabindex="-1"
+												role="dialog" aria-labelledby="deleteLabel"
+												aria-hidden="true">
+												<div class="modal-dialog">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h4 class="modal-title" id="deleteLabel">Delete
+																Schema: {{DelObj.name}}</h4>
+														</div>
+														<div class="modal-body">
+															<p>Do you want to delete?</p>
+
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default"
+																id="deleteConfirm" data-ng-click="delete1()">Yes</button>
+															<button type="button" class="btn btn-success"
+																data-dismiss="modal">No</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</tbody>
+									</table>
+								</div>
+								<!--  <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"></pagination>-->
+
+							</div>
+						</div>
+
+						<div class="modal fade" id="confirmRun" tabindex="-1"
+							role="dialog" aria-labelledby="confirmRun" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<!-- <button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button> -->
+										</h4>
+									</div>
+									<div class="modal-body">
+										<p style="color: green;">Test Run was sucessful</p>
+										<p>
+											File Name: <span id="runFN"></span>
+										</p>
+										<p>
+											Bytes Transferred: <span id="runBT"></span>
+										</p>
+										<p>
+											Time Taken: <span id="runTT"></span> secs
+										</p>
+
+									</div>
+									<div class="modal-footer">
+										<button type="button" data-dismiss="modal"
+											class="btn btn-default">OK</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<form role="form" class="form" ng-show="editing" id="schemaForm"
+							ng-model="schemaForm" name="schemaForm1"
+							ng-submit="saveAddUpdateSchema(editData1,ddArray)">
+							<div>
+							
+								<div class="row">&nbsp;</div>
+								<div class="row">&nbsp;</div>
+								<!--  <div class="col-xs-4"><a href="GoogleGraph/">chartLink</a></div>-->
+								<!-- <div class="row-fluid">&nbsp;</div> -->
+								<div class="row-fluid">
+
+									<div class="col-xs-4">
+										<label for="selectSchemaType">Name<sup><span
+												aria-hidden="true"
+												class="glyphicon glyphicon-asterisk red"></span></sup></label>
+									</div>
+									<div class="col-xs-6">
+										<label for="selectSchemaType">Description</label>
+									</div>
+								</div>
+
+								<div class="row-fluid">
+									<div class="col-xs-4">
+										<input type="text" editable-text="editname"
+											ng-model="editData1.name" placeholder="Name" name="fname"
+											class="form-control"
+											id="sourceName" ng-pattern="/^[a-zA-Z0-9_\s]*$/" required
+											 ng-disabled = "editData1.id != undefined" ng-blur="chkSchemaName(editData1.name);"> <span
+											class="alert-danger"
+											ng-show="schemaForm1.fname.$error.pattern">Special
+											Character Not allowed.</span>
+											<i ng-show="schemanamenotok" class="fa fa-times red">Schema Name already exist,Use another name !</i>
+									</div>
+
+									<div class="col-xs-6">
+										<textarea
+											class="form-control ng-pristine ng-valid ng-valid-required"
+											ng-model="editData1.description" name="location"
+											placeholder="Description" ng-keypress="savebutton = false"></textarea>
+									</div>
+									<div class="col-xs-6">
+										<input type="text" editable-text="editname"
+											ng-model="editData1.dataSchemaType" placeholder="schematype" name="schematype"
+											class="form-control ng-pristine ng-invalid ng-invalid-required"
+											id="schematype" ng-show=false />
+									</div>
+									
+									
+								</div>
+
+								<div class="clearfix visible-xs-block"></div>
+								<div class="row-fluid">
+									<div class="form-group">
+										<div class="col-sm-12 col-md-12 col-lg-12">
+											<!-- 	<div class="checkbox">
+								<label><input id="login-remember" type="checkbox"
+									name="remember" value="1" ng-model="dbaccess"> DB
+									Access?</label>
+							</div> -->
+											<!-- <div>
+								<span data-toggle="modal" data-target="#schedular"
+									class="text-primary"> <i
+									class="glyphicon glyphicon-time"></i> Add a Scheduler
+								</span>
+							</div>-->
+										</div>
+
+									</div>
+								</div>
+								<hr class="divider">
+
+								<div class="clearfix visible-xs-block"></div>
+								<div class="col-sm-14 controls">
+
+									<button class="btn btn-primary" type="button"
+										ng-click="newItem($event)">Add Attribute</button>
+										<div class="form-group col-sm-10 pull-right">
+										<div class="col-sm-2 pull-right">
+										<input type="button" id="btn-login"
+											class="btn btn-default col-sm-12" name="Cancel"
+											value="Cancel"  ng-click="canceloparation()"/>
+										</div>
+										<div class="col-sm-2 pull-right" ng-show = "editData1.id != undefined" >
+											<input type="button" id="btn-login"
+											class="btn btn-primary col-sm-12" name="Save & Quit"
+											value="Save & Quit"  ng-click="saveAddUpdateSchema(editData1,ddArray,'quit')"/>
+									</div>
+									<div class="col-sm-3 pull-right" ng-show = "editData1.id != undefined">
+											<input type="submit"
+											class="btn btn-primary col-sm-12" name="Modify Data Quality" value="Modify Data Quality"  />
+									</div>
+									<div class="col-sm-2 pull-right" ng-show = "editData1.id == undefined">
+									<input type="submit"
+											class="btn btn-primary col-sm-12" name="Save" value="Continue"  ng-disabled="schemanamenotok == true || schemaForm1.fname.$error.pattern == true"/>
+									</div>
+											
+									</div>
+									<div>&nbsp</div>
+								</div>
+							<table class="table table-bordered datatableSchema" ng-show="totalSourcer > 0" ts-wrapper>
+								<thead>
+									<tr>
+									<th>Name</th><!-- ts-default -->
+									<th>Type</th>
+									<th>Description</th>
+									<th>Operations</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="dd in ddArray">
+									<td contenteditable="true" ng-model="dd.Name" class="col-sm-1">{{dd.Name}}</span></td>
+									<td class="col-sm-1"><select class="form-control"
+										ng-init="dd.dataType = dd.dataType == null ? sourceType[0] : dd.dataType"
+										ng-options="sourceType[k] as t for (k,t) in sourceType"
+										ng-model="dd.dataType" name="Sourcertype"></select>
+									</td>
+									<td class="col-sm-5" contenteditable="true" ng-model="dd.description">{{dd.description}}</td>
+									<td ng-click="ddArray.splice($index, 1)" class="col-sm-1"><i class="fa fa-times fa-2x red"></i></td>
+									</tr>
+								</tbody>
+							</table>
+							</div>
+							<!-- <div class="row-fluid" ng-show="ddArray.length == 0">&nbsp;</div>
+							<div class="row-fluid col-xs-12" ng-hide="dd.active">&nbsp;</div> -->
+							<div class="row-fluid clearfix">
+								<div class="form-group col-sm-10 pull-right">								
+							</div>
+							<div class="row-fluid clearfix">&nbsp;</div>
+
+
+
+
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+									<div class="modal fade" id="detailDb" tabindex="-1"
+												role="dialog" aria-labelledby="myModalLabel"
+												aria-hidden="true">
+												<div class="modal-dialog">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal">
+																<span aria-hidden="true">&times;</span><span
+																	class="sr-only">Close</span>
+															</button>
+															<h4 class="modal-title" id="myModalDetailsLabel">Database
+																Details: {{dbDetails[0].dbName}}</h4>
+
+														</div>
+														<div class="modal-body">
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Name</div>
+																<div class="col-md-8">{{dbDetails[0].dbName}}</div>
+															</div>
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Host</div>
+																<div class="col-md-8">{{dbDetails[0].hostName}}</div>
+															</div>
+
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Port</div>
+																<div class="col-md-8">{{dbDetails[0].port}}</div>
+															</div>
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">Table Name</div>
+																<div class="col-md-8">{{dbDetails[0].tableName}}</div>
+															</div>
+															<div class="row-fluid clearfix">
+
+																<div class="col-md-4">User Name</div>
+																<div class="col-md-8">{{dbDetails[0].userName}}</div>
+															</div>
+														</div>
+														<!-- <div class="modal-footer">
+															<button type="button" class="btn btn-default"
+																data-dismiss="modal">Close</button>
+
+														</div> -->
+													</div>
+												</div>
+											</div>
+									<div class="modal fade" id="dataIngestionLog" tabindex="-1"
+											role="dialog" aria-labelledby="dataIngestionLog"
+											aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal" ng-click="valshow = false">
+																<span aria-hidden="true">&times;</span><span
+																	class="sr-only">Close</span>
+													</button>
+														<h4 class="modal-title" id="ingestionLogLabel">
+															Ingestion Log</span>
+														</h4>
+													</div>
+													<div class="modal-body">
+														<!-- <div ng-show="dataIngLog.noOfRecords == 0 " class="row-fluid clearfix">
+ 															 <center>
+ 															 <div class="col-md-12"><b>No records Found</b></div>
+ 															 </center>
+														</div> -->
+														<div class="row-fluid clearfix" ng-show="dataIngLog.ingestionStart != 'null'">
+															<div class="col-md-4"><b>{{dataIngLog.ingestionStartArr[0]}}</b></div>
+															<div class="col-md-8">{{dataIngLog.ingestionStartArr[1]}}</div>
+														</div>
+														<div class="row-fluid clearfix" ng-show="dataIngLog.ingestionFails != 'null'">
+															<div class="col-md-4"><b>{{dataIngLog.ingestionFailsArr[0]}}</b></div>
+															<div class="col-md-8">{{dataIngLog.ingestionFailsArr[1]}}</div>
+														</div>
+														<div class="row-fluid clearfix" ng-show="dataIngLog.ingestionComplete != 'null'">
+															<div class="col-md-4"><b>{{dataIngLog.ingestionCompleteArr[0]}}</b></div>
+															<div class="col-md-8">{{dataIngLog.ingestionCompleteArr[1]}}</div>
+														</div>
+														<div class="row-fluid clearfix" ng-show="dataIngLog.validationStart != 'null'">
+															<div class="col-md-4"><b>{{dataIngLog.validationStartArr[0]}}</b></div>
+															<div class="col-md-8">{{dataIngLog.validationStartArr[1]}}</div>
+														</div>
+														<div class="row-fluid clearfix" ng-show="dataIngLog.validationComplete != 'null'">
+															<div class="col-md-4"><b>{{dataIngLog.validationCompleteArr[0]}}</b></div>
+															<div class="col-md-8">{{dataIngLog.validationCompleteArr[1]}}</div>
+														</div>
+														<hr class="divider">
+														<div class="row-fluid clearfix" ng-show="dataIngLog.noOfRecords != 'null' && dataIngLog.noOfRecords > 0">
+															<div class="col-md-4"><b>No Of Records</b></div>
+															<div class="col-md-8">{{dataIngLog.noOfRecords}}</div>  
+														</div>
+														<div class="row-fluid clearfix" ng-show="dataIngLog.noOfCleansed != 'null' && dataIngLog.noOfCleansed > 0 ">
+															<div class="col-md-4"><b>No Of Cleansed Records</b></div>
+															<div class="col-md-8">{{(dataIngLog.noOfCleansed)}}</div>
+														</div>
+														<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfQurantile != 'null' && dataIngLog.validationLogDetails.noOfQurantile > 0 ">
+															<div class="row-fluid clearfix">
+																<div class="col-md-4"><b>No Of Quarantine Records</b></div>
+																<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfQurantile)}} &nbsp;<input type=checkbox ng-model=valshow></input> Show Details</div>
+															</div>
+															
+															<div class="row-fluid clearfix" ng-show=valshow>
+															<hr class="divider">
+																<!-- <div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfRangeFails != 'null' && dataIngLog.validationLogDetails.noOfRangeFails > 0 ">
+																	<div class="col-md-4"><b>No Of Range Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfRangeFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfRegexFails != 'null' && dataIngLog.validationLogDetails.noOfRegexFails > 0 ">
+																	<div class="col-md-4"><b>No Of Regex Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfRegexFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfFixedlLengthFails != 'null' && dataIngLog.validationLogDetails.noOfFixedlLengthFails > 0 ">
+																	<div class="col-md-4"><b>No Of Fixed Length Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfFixedlLengthFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfRegexFails != 'null' && dataIngLog.validationLogDetails.noOfRegexFails > 0 ">
+																	<div class="col-md-4"><b>No Of Regex Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfRegexFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfWhiteListFails != 'null' && dataIngLog.validationLogDetails.noOfWhiteListFails > 0 ">
+																	<div class="col-md-4"><b>No Of White List Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfWhiteListFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfBlackListFails != 'null' && dataIngLog.validationLogDetails.noOfBlackListFails > 0 ">
+																	<div class="col-md-4"><b>No Of Black List Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfBlackListFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfMandatoryFails != 'null' && dataIngLog.validationLogDetails.noOfMandatoryFails > 0 ">
+																	<div class="col-md-4"><b>No Of Mandatory Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfMandatoryFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfDataTypeMismatchFails != 'null' && dataIngLog.validationLogDetails.noOfDataTypeMismatchFails > 0 ">
+																	<div class="col-md-4"><b>No Of DataType Mismatch Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfDataTypeMismatchFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfColumnMismatchFails != 'null' && dataIngLog.validationLogDetails.noOfColumnMismatchFails > 0 ">
+																	<div class="col-md-4"><b>No Of Column Mismatch Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfColumnMismatchFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div>
+																<div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfotherFails != 'null' && dataIngLog.validationLogDetails.noOfotherFails > 0 ">
+																	<div class="col-md-4"><b>No Of other Fails</b></div>
+																	<div class="col-md-8">{{(dataIngLog.validationLogDetails.noOfotherFails/dataIngLog.noOfRecords) * 100 | number:2}}%</div>
+																</div> -->
+																
+																<!-- <div class="row-fluid clearfix" ng-show=valshow>
+																<img src="http://chart.apis.google.com/chart?cht=p&chs=600x250&chdl=No Of Cleansed|No Of Qurantile Records|No Of other Fails&chl=No Of Cleansed|No Of Qurantile|No Of other Fails&chco=FF0000|00FFFF|00FF00,6699CC|CC33FF|CCCC33&chp=0.436326388889&chtt=Ingestion Log Chart&chts=000000,24&chd=t:{{(dataIngLog.noOfCleansed/dataIngLog.noOfRecords) * 100}},{{(dataIngLog.validationLogDetails.noOfQurantile/dataIngLog.noOfRecords) * 100}},{{(dataIngLog.validationLogDetails.noOfotherFails/dataIngLog.noOfRecords) * 100}}" />
+																</div> -->
+																
+      																 <div style="width:700px;height:180px;float:left;"><pie-chart data="chartData" title="{{chartTitle}}" 
+														               width="{{chartWidth}}" height="{{chartHeight}}"
+														               select="selectRow(selectedRowIndex)"></pie-chart></div>
+   																 
+																<!-- <div class="row-fluid clearfix" ng-show="dataIngLog.validationLogDetails.noOfTotalRecords != 'null' && dataIngLog.validationLogDetails.noOfTotalRecords > 0 ">
+																	<div class="col-md-4"><b>No Of Total Records</b></div>
+																	<div class="col-md-8">{{dataIngLog.validationLogDetails.noOfTotalRecords}}</div>
+																</div> -->
+															</div>
+														</div>
+															
+													</div>
+													<!-- <div class="modal-footer">
+														<button type="button" data-dismiss="modal"
+															class="btn btn-default" ng-click="valshow = false">OK</button>
+													</div> -->
+												</div>
+											</div>
+										</div>
+						
+</div>

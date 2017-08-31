@@ -1,0 +1,7 @@
+<coordinator-app name="wf_scheduler" frequency="${frequency}"  start="${startTime}"  end="${endTime}" timezone="${timezone}" xmlns="uri:oozie:coordinator:0.1">
+   <action>
+      <workflow>
+         <app-path>${nameNode}/user/zeas/oozieTest</app-path>         
+      </workflow>
+   </action>
+</coordinator-app> 

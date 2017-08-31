@@ -1,0 +1,2 @@
+sh /home/zeas/zeas/bin/zeas 91 stop
+sh /home/zeas/zeas/bin/rename.sh tomcat7_inst2

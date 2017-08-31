@@ -1,0 +1,18 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="oozie-wf">
+<start to="sqoop"/>
+    <action name='sqoop'>
+	<configuration>
+		<property>
+			<name>mapred.job.queue.name</name>
+			<value>${queueName}</value>
+		</property>
+	</configuration>
+
+	<ok to="end" />
+	<error to="fail" />
+</action>
+   <kill name="fail">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill> 
+    <end name="end"/>
+</workflow-app>

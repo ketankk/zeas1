@@ -1,0 +1,1 @@
+hadoop job -kill $1

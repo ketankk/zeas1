@@ -1,0 +1,127 @@
+
+<div class="header" ng-hide="isLoginPage()">  
+<div class="container" >
+<div class="row col-md-14">
+               <div class="col-md-3">
+                  <!-- Logo -->
+                  <div class="logo">
+                     <h1><a href="index.html"><img title="" src="images/logo.png"></a></h1>
+                  </div>
+               </div>
+         
+               <div class="col-md-7">
+                  <div role="banner" class="navbar">
+                  <nav class="collapse navbar-collapse bs-navbar-collapse navbar-right pull-right" role="navigation">
+                        <ul class="nav navbar-nav">
+                           <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Welcome <span id="userDName"></span> <b class="caret"></b></a>
+                            <ul class="dropdown-menu animated fadeInUp">
+                              <li ng-show="userRole == 'admin' "><a ng-click="userdetails();">User Management</a></li>
+                              <li><a data-toggle="modal" data-target="#resetodal">Reset Password</a></li>
+                              <li><a href="#" ng-click="logOutPage();">Logout</a></li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </nav>
+                     
+                      
+                  </div>
+               </div>
+            </div>
+</div>
+		<div class="Menu" ng-hide="isLoginPage()">
+         <a href="/WebModule/DataSchema/"><div class="menuoneselected" id="one" onclick="changeMClass('one');">
+          <span>
+            DATA INGESTION
+          </span>
+          <br>
+          <img alt="" class="imgclass" src="images/Data Ingestion Icon.png">
+        </div></a>
+        <a href="/WebModule/Streaming/"><div class="menufour" id="four" onclick="changeMClass('four');">
+          <span>
+             DATA STREAM 
+          </span>
+          
+          <br>
+          <img alt="" class="imgclass" src="images/Data Output Icon.png">
+        </div></a>
+      <a href="/WebModule/DatapipeWorkbench/"> <div class="menutwo" id="two" onclick="changeMClass('two');">
+          <span>
+            PIPELINE WORKBENCH
+          </span>
+          <br>
+          <img alt="" class="imgclass" src="images/Datapipe Workbench Icon.png">
+        </div></a>
+        <a href="PiplineResults"><div class="menuthree" id="three" onclick="changeMClass('three');">
+          <span>
+            MACHINE LEARNING
+          </span>
+          <br>
+          <img alt="" class="imgclass" src="images/Pipeline Results Icon.png">
+        </div></a>
+        <!--  <div class="menufour" id="four">
+          <span>
+            DATA OUTPUT
+          </span>
+          <br>
+          <img alt="" class="imgclass" src="images/Data Output Icon.png">
+        </div> -->
+</div>
+	
+	
+</div>
+<div class="modal fade" id="resetodal" tabindex="-1"
+		role="dialog" aria-labelledby="deleteLabel"
+		aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">Reset Password</h4>
+					</div>
+					<div class="modal-body" style="min-height:200px;">
+					<form role="form" class="form" id="stageForm1" ng-model="stageForm" name="stageForm1" ng-submit="resetUserId(edituserData)">
+                          <div class="row-fluid">&nbsp;</div>
+                          <div class="form-group col-sm-11">
+                            <label for="userName" class="col-sm-4 control-label">Current Password<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup>
+                            </label>
+                            <div class="col-sm-7">
+                              <input type="password" class="form-control" ng-model="edituserData.curpass" id="username" placeholder="username" name="username"  required="required">
+                            </div>
+                          </div>
+                          <div class="form-group col-sm-11" >
+                            <label for="oassword" class="col-sm-4 control-label">New Password<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup>
+                            </label>
+                            <div class="col-sm-7">
+                              <input type="password" class="form-control" ng-model="edituserData.newpass" id="Password" placeholder="Password" name="Password"  required="required">
+                            </div>
+                          </div>
+                           <div class="form-group col-sm-11">
+                            <label for="stageName" class="col-sm-4 control-label">Confirm Password<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup>
+                            </label>
+                            <div class="col-sm-7">
+                              <input type="password" class="form-control" ng-model="edituserData.conpass" id="conpass" placeholder="Confirm Password" name="conpass"  required="required">
+                             
+                            </div>
+                          </div>
+                          <div class="row-fluid clearfix">
+                            <div class="form-group col-sm-12 pull-right">
+                              <div class="col-sm-2 pull-right">
+                                <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+
+                              </div>
+                              <div class="col-sm-2 pull-right">
+                                <input type="submit" class="btn btn-primary col-sm-12" name="Save" value="Save">
+                              </div>
+
+                            </div>
+                          </div>
+					</form>
+					</div>
+					<div class="modal-footer">
+					</div>
+				</div>
+			</div>
+		</div>

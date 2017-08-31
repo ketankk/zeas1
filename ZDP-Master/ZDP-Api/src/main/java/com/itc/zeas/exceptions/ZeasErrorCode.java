@@ -1,0 +1,20 @@
+package com.itc.zeas.exceptions;
+
+
+import org.apache.http.HttpStatus;
+
+public interface ZeasErrorCode extends HttpStatus {
+	int ZEAS_EXCEPTION=9500;
+	int FILE_NOT_FOUND=9501;
+	int SQL_EXCEPTION=9502;
+	int NULL_POINTER_EXCEPTION=9503;
+	int DUPLICATE_ENTITY=9504;
+	int SQL_QUERY_PROPERTY_NOT_FOUND=9505;
+	int NOT_VALID_STRING = 9506;
+	int ENTITY_DOESNOT_EXIST=9507;
+	int CONFIGURTION_PROPERTY_NOT_FOUND=9510;
+    int CONNECTION_EXCEPTION = 9511;
+    int SERVICE_ISSUE = 9512;
+    int URL_NOT_PROPER=9513;
+    int UNDER_CONSTRUCTION=9514;
+}

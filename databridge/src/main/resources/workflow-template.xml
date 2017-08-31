@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workflow-app name="HiveServer2-security" xmlns="uri:oozie:workflow:0.2" >
+	<start to="end" />	
+</workflow-app>

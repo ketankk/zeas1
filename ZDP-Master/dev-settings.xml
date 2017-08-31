@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+
+<!-- | This is the configuration file for Maven. It can be specified at two 
+	levels: | | 1. User Level. This settings.xml file provides configuration 
+	for a single user, | and is normally provided in ${user.home}/.m2/settings.xml. 
+	| | NOTE: This location can be overridden with the CLI option: | | -s /path/to/user/settings.xml 
+	| | 2. Global Level. This settings.xml file provides configuration for all 
+	Maven | users on a machine (assuming they're all using the same Maven | installation). 
+	It's normally provided in | ${maven.home}/conf/settings.xml. | | NOTE: This 
+	location can be overridden with the CLI option: | | -gs /path/to/global/settings.xml 
+	| | The sections in this sample file are intended to give you a running start 
+	at | getting the most out of your Maven installation. Where appropriate, 
+	the default | values (values used when the setting is not specified) are 
+	provided. | | -->
+<settings
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+
+	<!-- localRepository | The path to the local repository maven will use to 
+		store artifacts. | | Default: ${user.home}/.m2/repository <localRepository>/path/to/local/repo</localRepository> -->
+
+
+
+	<!-- <proxies> <proxy> <id>itcproxy</id> <active>true</active> <protocol>http</protocol> 
+		<host>10.6.13.77</host> <port>8080</port> <nonProxyHosts>maven</nonProxyHosts> 
+		</proxy> </proxies> <localRepository>C:\Users\19217\.m2\repository</localRepository> -->
+
+	<profiles>
+		<profile>
+			<id>Local</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<db.url>jdbc:mysql://10.6.185.142:3306/zeas</db.url>
+				<db.username>zeas</db.username>
+				<db.password>zeas</db.password>
+				<oozie.db.url>jdbc:mysql://localhost/</oozie.db.url>
+				<oozie.db.user>root</oozie.db.user>
+				<oozie.db.password>hadoop123</oozie.db.password>
+				<app.dir>D:/</app.dir>
+				<archive.dir>/home/hadoop/zeas/archive</archive.dir>
+				<hdfs.app.dir>/mytest</hdfs.app.dir>
+				<namenode.host>hdfs://hadooplab.bigdataleap.com:8020/</namenode.host>
+
+				<hdfs.dataset.export.dir>/zeas/dataset_export</hdfs.dataset.export.dir>
+				<zeas.script.dir>/zeas/Config/</zeas.script.dir>
+				<hdfs.url>hdfs://localhost:8020/</hdfs.url>
+				<resource.manager.url>localhost:8032</resource.manager.url>
+				<preview.size>.5</preview.size>
+				<spark.hostname>ec2-54-174-149-226.compute-1.amazonaws.com</spark.hostname>
+				<ssh.port>22</ssh.port>
+				<consumer.start.script>/home/zeasStream/Consumer-Start.sh</consumer.start.script>
+				<consumer.stop.script>/home/zeasStream/Consumer-Stop.sh</consumer.stop.script>
+				<spark.user>zeasStream</spark.user>
+				<spark.password>zeasStream</spark.password>
+
+				<databridge.c3p0.min.pool.size>5</databridge.c3p0.min.pool.size>
+				<databridge.c3p0.acquire.increment>8</databridge.c3p0.acquire.increment>
+				<databridge.c3p0.unret.conn.timeout>30</databridge.c3p0.unret.conn.timeout>
+				<databridge.c3p0.debug.unreturned.conn>false</databridge.c3p0.debug.unreturned.conn>
+				<databridge.c3p0.max.pool.size>40</databridge.c3p0.max.pool.size>
+
+				<web.c3p0.min.pool.size>5</web.c3p0.min.pool.size>
+				<web.c3p0.acquire.increment>8</web.c3p0.acquire.increment>
+				<web.c3p0.unret.conn.timeout>30</web.c3p0.unret.conn.timeout>
+				<web.c3p0.debug.unreturned.conn>true</web.c3p0.debug.unreturned.conn>
+				<web.c3p0.max.pool.size>50</web.c3p0.max.pool.size>
+
+				<oozie.c3p0.min.pool.size>5</oozie.c3p0.min.pool.size>
+				<oozie.c3p0.acquire.increment>5</oozie.c3p0.acquire.increment>
+				<oozie.c3p0.unret.conn.timeout>30</oozie.c3p0.unret.conn.timeout>
+				<oozie.c3p0.debug.unreturned.conn>false</oozie.c3p0.debug.unreturned.conn>
+				<oozie.c3p0.max.pool.size>20</oozie.c3p0.max.pool.size>
+
+			</properties>
+		</profile>
+		<profile>
+			<id>PreProd</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<db.url>jdbc:mysql://10.6.185.15:3306/zeas</db.url>
+				<db.username>zeas</db.username>
+				<db.password>zeas</db.password>
+				<oozie.db.url>jdbc:mysql://localhost/</oozie.db.url>
+				<oozie.db.user>root</oozie.db.user>
+				<oozie.db.password>hadoop123</oozie.db.password>
+				<app.dir>D:/</app.dir>
+				<archive.dir>/home/hadoop/zeas/archive</archive.dir>
+				<hdfs.app.dir>/mytest</hdfs.app.dir>
+				<namenode.host>hdfs://hadooplab.bigdataleap.com:8020/</namenode.host>
+
+				<hdfs.dataset.export.dir>/zeas/dataset_export</hdfs.dataset.export.dir>
+				<zeas.script.dir>/zeas/Config/</zeas.script.dir>
+				<hdfs.url>hdfs://localhost:8020/</hdfs.url>
+				<resource.manager.url>localhost:8032</resource.manager.url>
+				<preview.size>.5</preview.size>
+				<spark.hostname>ec2-54-174-149-226.compute-1.amazonaws.com</spark.hostname>
+				<ssh.port>22</ssh.port>
+				<consumer.start.script>/home/zeasStream/Consumer-Start.sh</consumer.start.script>
+				<consumer.stop.script>/home/zeasStream/Consumer-Stop.sh</consumer.stop.script>
+				<spark.user>zeasStream</spark.user>
+				<spark.password>zeasStream</spark.password>
+
+				<databridge.c3p0.min.pool.size>5</databridge.c3p0.min.pool.size>
+				<databridge.c3p0.acquire.increment>8</databridge.c3p0.acquire.increment>
+				<databridge.c3p0.unret.conn.timeout>30</databridge.c3p0.unret.conn.timeout>
+				<databridge.c3p0.debug.unreturned.conn>false</databridge.c3p0.debug.unreturned.conn>
+				<databridge.c3p0.max.pool.size>40</databridge.c3p0.max.pool.size>
+
+				<web.c3p0.min.pool.size>5</web.c3p0.min.pool.size>
+				<web.c3p0.acquire.increment>8</web.c3p0.acquire.increment>
+				<web.c3p0.unret.conn.timeout>30</web.c3p0.unret.conn.timeout>
+				<web.c3p0.debug.unreturned.conn>true</web.c3p0.debug.unreturned.conn>
+				<web.c3p0.max.pool.size>50</web.c3p0.max.pool.size>
+
+				<oozie.c3p0.min.pool.size>5</oozie.c3p0.min.pool.size>
+				<oozie.c3p0.acquire.increment>5</oozie.c3p0.acquire.increment>
+				<oozie.c3p0.unret.conn.timeout>30</oozie.c3p0.unret.conn.timeout>
+				<oozie.c3p0.debug.unreturned.conn>false</oozie.c3p0.debug.unreturned.conn>
+				<oozie.c3p0.max.pool.size>20</oozie.c3p0.max.pool.size>
+
+			</properties>
+		</profile>
+
+		
+		<profile>
+			<id>Aws</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<db.url>jdbc:mysql://54.210.74.58/zeas</db.url>
+				<db.username>zeas</db.username>
+				<db.password>zeas</db.password>
+				<oozie.db.url>jdbc:mysql://localhost:3306/oozie</oozie.db.url>
+				<oozie.db.user>root</oozie.db.user>
+				<oozie.db.password></oozie.db.password>
+				<app.dir>/root/zeas/mytest</app.dir>
+				<archive.dir>/root/zeas/archive</archive.dir>
+				<hdfs.app.dir>/mytest</hdfs.app.dir>
+				<namenode.host>hdfs://ec2-54-210-74-58.compute-1.amazonaws.com:9000</namenode.host>
+
+				<hdfs.dataset.export.dir>/zeas/dataset_export</hdfs.dataset.export.dir>
+				<zeas.script.dir>/root/zeas/Config/</zeas.script.dir>
+				<hdfs.url>hdfs://ec2-54-210-74-58.compute-1.amazonaws.com:9000</hdfs.url>
+				<resource.manager.url>ec2-54-210-74-58.compute-1.amazonaws.com:8032</resource.manager.url>
+				<preview.size>.5</preview.size>
+				<spark.hostname>ec2-54-210-74-58.compute-1.amazonaws.com</spark.hostname>
+				<ssh.port>22</ssh.port>
+				<consumer.start.script>/root/zeas/Config/Consumer-Start.sh</consumer.start.script>
+				<consumer.stop.script>/root/zeas/Config/Consumer-Stop.sh</consumer.stop.script>
+				<spark.user>root</spark.user>
+				<spark.password>N1g@yr+</spark.password>
+
+				<databridge.c3p0.min.pool.size>5</databridge.c3p0.min.pool.size>
+				<databridge.c3p0.acquire.increment>8</databridge.c3p0.acquire.increment>
+				<databridge.c3p0.unret.conn.timeout>30</databridge.c3p0.unret.conn.timeout>
+				<databridge.c3p0.debug.unreturned.conn>false</databridge.c3p0.debug.unreturned.conn>
+				<databridge.c3p0.max.pool.size>40</databridge.c3p0.max.pool.size>
+
+				<web.c3p0.min.pool.size>5</web.c3p0.min.pool.size>
+				<web.c3p0.acquire.increment>8</web.c3p0.acquire.increment>
+				<web.c3p0.unret.conn.timeout>30</web.c3p0.unret.conn.timeout>
+				<web.c3p0.debug.unreturned.conn>true</web.c3p0.debug.unreturned.conn>
+				<web.c3p0.max.pool.size>50</web.c3p0.max.pool.size>
+
+				<oozie.c3p0.min.pool.size>5</oozie.c3p0.min.pool.size>
+				<oozie.c3p0.acquire.increment>5</oozie.c3p0.acquire.increment>
+				<oozie.c3p0.unret.conn.timeout>30</oozie.c3p0.unret.conn.timeout>
+				<oozie.c3p0.debug.unreturned.conn>false</oozie.c3p0.debug.unreturned.conn>
+				<oozie.c3p0.max.pool.size>20</oozie.c3p0.max.pool.size>
+			</properties>
+		</profile>
+		<profile>
+			<id>Connection-testing</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<db.url>jdbc:mysql://54.210.74.58/taphius</db.url>
+				<db.username>root</db.username>
+				<db.password></db.password>
+				<oozie.db.url>jdbc:mysql://localhost:3306/oozie</oozie.db.url>
+				<oozie.db.user>root</oozie.db.user>
+				<oozie.db.password></oozie.db.password>
+				<app.dir>/root/zeas/mytest</app.dir>
+				<archive.dir>/root/zeas/archive</archive.dir>
+				<hdfs.app.dir>/mytest</hdfs.app.dir>
+				<namenode.host>hdfs://ec2-54-210-74-58.compute-1.amazonaws.com:9000</namenode.host>
+
+				<hdfs.dataset.export.dir>/zeas/dataset_export</hdfs.dataset.export.dir>
+				<zeas.script.dir>/root/zeas/Config/</zeas.script.dir>
+				<hdfs.url>hdfs://ec2-54-210-74-58.compute-1.amazonaws.com:9000</hdfs.url>
+				<resource.manager.url>ec2-54-210-74-58.compute-1.amazonaws.com:8032</resource.manager.url>
+				<preview.size>.5</preview.size>
+				<spark.hostname>ec2-54-210-74-58.compute-1.amazonaws.com</spark.hostname>
+				<ssh.port>22</ssh.port>
+				<consumer.start.script>/root/zeas/Config/Consumer-Start.sh</consumer.start.script>
+				<consumer.stop.script>/root/zeas/Config/Consumer-Stop.sh</consumer.stop.script>
+				<spark.user>root</spark.user>
+				<spark.password>N1g@yr+</spark.password>
+			</properties>
+		</profile>
+	</profiles>
+
+</settings>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+			http://www.springframework.org/schema/mvc
+			http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<context:annotation-config />
+	<!-- <context:property-placeholder location="classpath:config.properties" 
+		/> -->
+	<!-- DATABASE SETUP -->
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
+		<property name="username" value="sa" /> <property name="password" value="" 
+		/> <property name="driverClassName" value="org.hsqldb.jdbcDriver" /> <property 
+		name="url" value="jdbc:hsqldb:mem:example" /> </bean> -->
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://10.6.116.181/taphius" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="persistenceUnitName" value="examplePU" />
+		<property name="persistenceXmlLocation" value="classpath:persistence.xml" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="true" />
+				<property name="showSql" value="true" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider
+				</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
+				<prop key="hibernate.connection.url">jdbc:mysql://10.6.116.181/taphius</prop>
+				<prop key="hibernate.connection.username">root</prop>
+				<prop key="hibernate.connection.password">root</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">verify</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="hibernate.c3p0.acquire_increment">1</prop>
+				<prop key="hibernate.c3p0.min_size">5</prop>
+				<prop key="hibernate.c3p0.max_size">20</prop>
+				<prop key="hibernate.c3p0.timeout">5000</prop>
+				<prop key="hibernate.c3p0.max_statements">100</prop>
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
+				<prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+				<prop key="hibernate.c3p0.acquireRetryAttempts">1</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+		scope="prototype">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="userDao" class="com.itc.taphius.security.dao.user.JpaUserDao">
+	</bean>
+
+
+
+	<bean id="dataBaseInitializer" class="com.itc.taphius.security.dao.DataBaseInitializer"
+		init-method="initDataBase">
+		<constructor-arg ref="userDao" />
+		<constructor-arg ref="passwordEncoder" />
+	</bean>
+
+
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- INIT REST COMPONENTS -->
+
+
+
+	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+
+	<!-- SPRING SECURITY SETUP -->
+
+	<bean id="passwordEncoder"
+		class="org.springframework.security.crypto.password.StandardPasswordEncoder">
+		<constructor-arg value="ThisIsASecretSoChangeMe" />
+	</bean>
+
+
+
+	<security:authentication-manager id="authenticationManager">
+		<security:authentication-provider
+			user-service-ref="userDao">
+			<security:password-encoder ref="passwordEncoder"></security:password-encoder>
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+	<security:http realm="Protected API" use-expressions="true"
+		auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint"
+		authentication-manager-ref="authenticationManager">
+
+		<security:custom-filter ref="authenticationTokenProcessingFilter"
+			position="FORM_LOGIN_FILTER" />
+		<security:access-denied-handler
+			error-page="/index.html" />
+		<security:intercept-url pattern="/rest/user/authenticate"
+			access="permitAll" />
+		<security:intercept-url method="GET"
+			pattern="/rest/service/**" access="hasAnyRole('admin','user')" />
+		<security:intercept-url method="PUT"
+			pattern="/rest/service/**" access="hasAnyRole('admin','user')" />
+		<security:intercept-url method="POST"
+			pattern="/rest/service/**" access="hasAnyRole('admin','user')" />
+		<security:intercept-url method="DELETE"
+			pattern="/rest/service/**" access="hasAnyRole('admin','user')" />
+	</security:http>
+
+	<bean id="unauthorizedEntryPoint" class="com.itc.taphius.security.rest.UnauthorizedEntryPoint" />
+
+	<bean
+		class="com.itc.taphius.security.rest.AuthenticationTokenProcessingFilter"
+		id="authenticationTokenProcessingFilter">
+		<constructor-arg ref="userDao" />
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10000" />
+	</bean>
+
+
+</beans>

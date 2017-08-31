@@ -1,0 +1,487 @@
+<section ng-controller="datasecurityCtrl" id="dataSec">
+
+
+    <div class="section-body" style="margin-top:0px">
+        <div class="row">
+            <div class="clearfix">&nbsp;</div>
+            <div class="card">
+                <ul class="nav nav-pills">
+                    <li ng-class="{active:isSet(1)||isSet(11)||isSet(12)}" class="dropdown pointerCursor">
+                        <a class="dropdown-toggle" data-toggle="dropdown">AccessManager</a>
+                        <!-- ng-click="setTab(1)" -->
+                        <ul class="dropdown-menu" role="listbox">
+
+                            <li class="pointerCursor"><a role="option" ng-click="setTab(11)">Tag based policy</a></li>
+                            <li class="pointerCursor"><a role="option" ng-click="setTab(12)">Report</a></li>
+                        </ul>
+                    </li>
+                    <li ng-class="{active:isSet(2)}" class="pointerCursor"><a ng-click="setTab(2)">Audit</a></li>
+                    <li ng-class="{active:isSet(3)}" class="pointerCursor"><a ng-click="setTab(3)">Settings</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="clearfix">&nbsp;</div>
+                <div ng-show="tab==1">
+                    <h4>AccessManager</h4>
+
+                </div>
+                <div ng-show="tab==2">
+                    <h4>Audit</h4>
+                </div>
+                <div ng-show="tab==3">
+                    <h4>Settings</h4>
+                </div>
+                <div ng-show="tab==11">
+                    <!-- <h4>tag based</h4> -->
+                    <div class="table-responsive tablebox" style="width: 500px;">
+                        <table class="table no-margin profile " ts-wrapper id="serviceClass">
+                            <thead style="opacity:1 !important">
+                                <tr class="headertext">
+                                    <th class="wordbraak "><i class="fa fa-folder-open" aria-hidden="true"></i>TAG</th>
+                                    <th><i class="fa fa-plus pull-right pointerCursor" aria-hidden="true" ng-click="cServiceform()"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="p in listTagServices">
+
+                                    <td style="color: #428BCA" class="pointerCursor" ng-click="getTags_service(p.id,p.name)">{{p.name}}</td>
+                                    <td>
+                                        <i class="fa fa-trash pull-right pointerCursor" aria-hidden="true" ng-click="deleteService(p.id)"></i>
+                                        <i class="fa fa-pencil-square-o pull-right pointerCursor" aria-hidden="true"></i>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-show="tab==12">
+                    <h4>reports</h4>
+                </div>
+
+                <!-- create service form -->
+                <div ng-show="tab=='createservice'">
+                    <!-- <h4>createservice</h4> -->
+
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="col-sm-3">
+
+                                <label for="Service Name">Service Name<sup><span
+                                    aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <input type="text" class="form-control" id="servicename" placeholder="Service Name" ng-model="serviceData.serviceName" required="required">
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Agent Name">Description</label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <input type="text" class="form-control" id="serdescription" placeholder="Description" ng-model="serviceData.serDescription">
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Agent Name">Active status</label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <input name="enable" type="radio" ng-model="serviceData.serStatus" value="enable"><br><b>Enable</b><br>
+                                <input name="disable" type="radio" ng-model="serviceData.serStatus" value="disable"><br><b>Disable</b>
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" style="text-align: center;">
+                        <input type="button" class="btn btnsec" name="cancel" value="Cancel" style="margin-right: 30px;" ng-click="setTab(11)">
+                        <input type="button" class="btn btn-primary" name="submit" value="Submit" ng-click="cService(serviceData)" ng-disabled="serviceData.serviceName==null">
+                    </div>
+
+
+                </div>
+
+                <!-- create service ends here -->
+
+                <!-- display tags under service -->
+                <div ng-show="tab=='getTags'">
+                    <!-- <h4>Tags under service</h4> -->
+                    <div>
+                        <button class="btn btnsec " ng-click="setTab('createpolic')">Add Policy</button>
+                    </div>
+                    <div class="clearfix">&nbsp;&nbsp;</div>
+                    <div class="table-responsive tablebox">
+
+                        <table class="table no-margin profile " ts-wrapper id="">
+                            <thead style="opacity:1 !important">
+                                <tr class="headertext">
+                                    <th>Policy ID</th>
+                                    <th>Policy Name</th>
+                                    <th>Status</th>
+                                    <th>Audit Logging</th>
+                                    <th>Groups</th>
+                                    <th>Users</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="p in listservicePolicies">
+
+                                    <td style="color : #428BCA" class="pointerCursor" ng-click="">{{p.id}}</td>
+                                    <td>{{p.name}}</td>
+                                    <td ng-if="p.isEnabled==true">Enabled</td>
+                                    <td ng-if="p.isEnabled==false">Disabled</td>
+                                    <td ng-if="p.isAuditEnabled==true">Enabled</td>
+                                    <td ng-if="p.isAuditEnabled==false">Disabled</td>
+                                    <td ng-repeat=" x in p.policyItems" ng-if="x.groups!=''">
+                                        <ul class="header-nav" ng-repeat="y in x.groups">
+                                            <li>{{y}}</li>
+                                        </ul>
+                                    </td>
+                                    <td ng-repeat=" x in p.policyItems" ng-if="x.groups==''"></td>
+                                    <td ng-repeat=" x in p.policyItems" ng-if="x.users!=''">
+                                        <ul class="header-nav" ng-repeat="y in x.users">
+                                            <li>{{y}}</li>
+                                        </ul>
+                                    </td>
+                                    <td ng-repeat=" x in p.policyItems" ng-if="x.users==''"></td>
+                                    <td>
+                                        <i class="fa fa-trash  pointerCursor" aria-hidden="true" ng-click="deletePolicy(p.id)"></i>
+                                        <i class="fa fa-pencil-square-o  pointerCursor" aria-hidden="true"></i>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- ends here -->
+
+                <!-- create policy for a tag-->
+
+                <div ng-show="tab=='createpolic'">
+                    <!-- <h4>Create Policy</h4> -->
+
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="col-sm-3">
+
+                                <label for="Policy Type">Policy Type</label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <button class="btn btn-primary">Access</button>
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Policy Name">Policy Name<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <input type="text" class="form-control" id="" placeholder="Policy Name" ng-model="policyData.policyName">
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Tag">Tag<sup><span aria-hidden="true" class="glyphicon glyphicon-asterisk red"></span></sup></label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <input type="text" list="tagsp" multiple class="form-control ng-pristine ng-invalid ng-invalid-required" id="Tagp" placeholder="Tag" ng-model="policyData.policyTag" ng-focus="updateTags()">
+                                <datalist id="tagsp"><option ng-repeat="t in policytags" value="{{t}}"></datalist>
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Audit Logging">Audit Logging</label>
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <label>YES</label>
+                                <label class="switch" style="margin: -5px 5px">
+                                        <input type="checkbox" checked="checked" ng-click="auditLogging(checkBox1)">
+                                        <div class="slider round"></div>
+                                </label>
+                                <label>NO</label>
+
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Audit Logging">Policy Enabled</label>
+                            </div>
+                            <div class="form-group col-sm-7">
+
+                                <label>YES</label>
+                                <label class="switch" style="margin: -5px 5px">
+                                        <input type="checkbox" checked="checked" ng-click="auditLogging(checkBox2)">
+                                        <div class="slider round"></div>
+                                </label>
+                                <label>NO</label>
+
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-sm-3">
+
+                                <label for="Description">Description</label>
+                            </div>
+                            <div class="form-group col-sm-7">
+
+                                <textarea id="poldesTbox" ng-model="policyData.description" style="margin: 0px; width: 308px; height: 79px;" class="ng-pristine ng-valid form-control">Type something here</textarea>
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- allow conditions -->
+                    <div class="clearfix">&nbsp;</div>
+                    <div>
+                        <h4>Allow conditions</h4>
+                        <div class="tablebox">
+
+                            <div style="margin: 20px;" class="">
+                                <form>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Select Group</th>
+                                                <th>Select User</th>
+                                                <th>Policy condition</th>
+                                                <th>Component permissions</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="ob in policyItems track by $index">
+
+
+                                                <td>
+                                                    <div>
+                                                        <select ng-model="gn" ng-options="x for x  in masterGroups" ng-change="selectedGroup(gn,$index,'allowCond')" class="form-control"></select>
+                                                    </div>
+                                                    <div class="clearfix">&nbsp;</div>
+                                                    <div ng-repeat="p in ob.groups">
+                                                        <ul class="header-nav">
+                                                            <li style="margin-right: 5px;"><button class="btnsec" ng-click="removeGroup(p)">{{p}}</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div>
+                                                        <select ng-model="un" ng-options="x for x  in masterUsers" ng-change="selectedUser(un,$index,'allowCond')" class="form-control"></select>
+                                                    </div>
+                                                    <div class="clearfix">&nbsp;</div>
+                                                    <div ng-repeat="p in ob.users">
+                                                        <ul class="header-nav">
+                                                            <li style="margin-right: 5px;"><button class="btnsec" ng-click="removeUser(p)">{{p}}</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <span ng-if="ob.conditions!=''"><button class="btn-primary" ng-model="ob.conditions[0].value">{{ob.conditions[0].value}}</button></span>
+                                                    <i class="fa fa-pencil-square-o pull-right pointerCursor" aria-hidden="true" ng-click="policyM('pc','',$index)"></i>
+                                                </td>
+
+                                                <td>
+                                                    <i class="fa fa-pencil-square-o pull-right pointerCursor" aria-hidden="true" ng-click="policyM('cp','',$index)"></i>
+                                                </td>
+
+                                                <td>
+                                                    <i class="fa fa-times pointerCursor" aria-hidden="true" ng-click=" remove() "></i>
+                                                </td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </form>
+                                <div class="form-group">
+
+                                    <input type="submit" class="btn btn-primary addnew pull-right" value="Add New" ng-click="addNew('allowCond')">
+                                </div>
+                                <div class="clearfix">&nbsp;</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- deny conditions -->
+                    <div class="clearfix">&nbsp;</div>
+                    <div>
+                        <h4>Deny conditions</h4>
+                        <div class="tablebox">
+                            <div style="margin: 20px;" class="">
+                                <form>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Select Group</th>
+                                                <th>Select User</th>
+                                                <th>Policy condition</th>
+                                                <th>Component permissions</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="ob in denypolicyItems track by $index">
+
+
+                                                <td>
+                                                    <div>
+                                                        <select ng-model="gn" ng-options="x for x  in masterGroups" ng-change="selectedGroup(gn,$index,'denyCond')" class="form-control"></select>
+                                                    </div>
+                                                    <div class="clearfix">&nbsp;</div>
+                                                    <div ng-repeat="p in ob.groups">
+                                                        <ul class="header-nav">
+                                                            <li style="margin-right: 5px;"><button class="btnsec" ng-click="removeGroup(p)">{{p}}</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div>
+                                                        <select ng-model="un" ng-options="x for x  in masterUsers" ng-change="selectedUser(un,$index,'denyCond')" class="form-control"></select>
+                                                    </div>
+                                                    <div class="clearfix">&nbsp;</div>
+                                                    <div ng-repeat="p in ob.users">
+                                                        <ul class="header-nav">
+                                                            <li style="margin-right: 5px;"><button class="btnsec" ng-click="removeUser(p)">{{p}}</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <span ng-if="ob.conditions!=''"><button class="btn-primary" ng-model="ob.conditions[0].value">{{ob.conditions[0].value}}</button></span>
+                                                    <i class="fa fa-pencil-square-o pull-right pointerCursor" aria-hidden="true" ng-click="policyM('pc','',$index)"></i>
+                                                </td>
+
+                                                <td>
+                                                </td>
+
+                                                <td>
+                                                    <i class="fa fa-times pointerCursor" aria-hidden="true" ng-click=" remove() "></i>
+                                                </td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </form>
+                                <div class="form-group">
+
+                                    <input type="submit" class="btn btn-primary addnew pull-right" value="Add New" ng-click="addNew('denyCond')">
+                                </div>
+                                <div class="clearfix">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ends here -->
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="col-md-3" style="text-align: center;">
+                        <input type="button" class="btn btnsec" name="cancel" value="Cancel" style="margin-right: 30px;" ng-click="setTab(11)">
+                        <input type="button" class="btn btn-primary" name="submit" value="Add" ng-click="cPolicy(policyData)">
+                    </div>
+
+
+                    <!-- modal for policy condition -->
+                    <div class="modal fade" id="policyCondition" tabindex="-1" role="dialog" aria-labelledby="policyCond" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="policyCond">
+                                        add/edit conditions
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>Accessed after expiry date (yes/no) ?</h4>
+                                    <div>
+                                        <input type="text" name="access" class="form-control" ng-model="accessP">
+                                    </div>
+                                    <div class="clearfix">&nbsp;</div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" id="deleteConfirm" data-ng-click="policyM('closePC',accessP)">Yes</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ends here -->
+
+
+                    <!-- modal for component permissions -->
+                    <div class="modal fade" id="componentPermision" tabindex="-1" role="dialog" aria-labelledby="componentPermission" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                                    </button>
+
+                                    <h4 class="modal-title" id="componentPermission">
+                                        Components Permissions
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div>
+
+                                        <select ng-model="accComp" ng-options="x for x  in accessitems" ng-change="accessComp(accComp)" class="form-control"></select>
+
+                                    </div>
+
+                                    <div class="clearfix">&nbsp;</div>
+
+                                    <div>
+                                        <table class="table no-margin profile tablebox" ts-wrapper id="">
+                                            <thead style="opacity:1 !important">
+                                                <tr class="headertext">
+                                                    <th>Component</th>
+                                                    <th>Permission</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="p in accessComps">                                                   
+                                                    <td><input type="checkbox" name="">{{p.name}}</td>
+                                                    <td>
+                                                        <div ng-repeat="x in p.permission">
+                                                        <ul class="header-nav">
+                                                            <li style="margin: 2px"><input type="checkbox" name="" ng-model="x.chkd">{{x}}</li>
+                                                        </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="button" name="cancel" class="btn btnsec pull-left" value="Cancel"  data-dismiss="modal">
+                                    <input type="button" name="submit" class="btn btn-primary pull-right" value="Create" ng-click="cPermission(accessComps)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ends here -->
+                </div>
+
+            </div>
+        </div>
+
+</section>

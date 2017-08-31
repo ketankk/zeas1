@@ -1,0 +1,1 @@
+mvn clean install -s dev-settings.xml -P Local

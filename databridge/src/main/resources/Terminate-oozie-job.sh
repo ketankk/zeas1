@@ -1,0 +1,1 @@
+oozie job -oozie $2 -kill $1
